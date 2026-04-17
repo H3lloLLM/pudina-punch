@@ -64,36 +64,53 @@
             margin: 0;
             color: var(--dark-green);
         }
-        .payment-section {
-            display: none; /* Hidden until total is calculated */
+        .btn {
+            background-color: var(--green);
+            color: var(--white);
+            border: none;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
             margin-top: 20px;
+            box-sizing: border-box;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: var(--dark-green);
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .btn-gpay {
+            background-color: #104A25;
+        }
+        /* Hide Step 2 initially */
+        #step-2, #success-message {
+            display: none;
             text-align: center;
         }
         #qr-code {
             margin: 15px 0;
             width: 200px;
             height: 200px;
+            border: 2px solid var(--green);
+            border-radius: 10px;
+            padding: 10px;
         }
-        .btn {
-            background-color: var(--green);
-            color: var(--white);
-            border: none;
-            padding: 12px 20px;
-            font-size: 18px;
+        .warning-text {
+            color: #d32f2f;
+            font-size: 14px;
             font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 15px;
-        }
-        .btn:hover {
-            background-color: var(--dark-green);
-        }
-        .btn-gpay {
-            background-color: #104A25;
-            text-decoration: none;
-            display: inline-block;
-            box-sizing: border-box;
+            background: #ffebee;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
@@ -103,39 +120,62 @@
     <h1>PUDINA PUNCH</h1>
     <p class="subtitle">Swasti Knows Best!</p>
 
-    <form id="orderForm">
-        <label for="name">Full Name</label>
-        <input type="text" id="name" required>
+    <div id="step-1">
+        <form id="detailsForm">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" required>
 
-        <label for="phone">Phone Number (WhatsApp)</label>
-        <input type="tel" id="phone" required>
+            <label for="phone">Phone Number (WhatsApp)</label>
+            <input type="tel" id="phone" required>
 
-        <label for="address">Full Delivery Address</label>
-        <textarea id="address" rows="3" required></textarea>
+            <label for="address">Full Delivery Address</label>
+            <textarea id="address" rows="3" required></textarea>
 
-        <label for="pin">PIN Code</label>
-        <input type="number" id="pin" required placeholder="e.g., 400069">
+            <label for="pin">PIN Code</label>
+            <input type="number" id="pin" required placeholder="e.g., 400069">
 
-        <label for="qty">Number of Bottles</label>
-        <input type="number" id="qty" min="1" value="1" required>
+            <label for="qty">Number of Bottles</label>
+            <input type="number" id="qty" min="1" value="1" required>
 
-        <div class="summary">
-            <p id="calc-text">Total Amount: ₹0</p>
-            <h2 id="total-display">₹0</h2>
+            <div class="summary">
+                <p id="calc-text">Total Amount: ₹0</p>
+                <h2 id="total-display">₹0</h2>
+            </div>
+
+            <button type="submit" class="btn" id="proceedBtn">Submit Details & Pay</button>
+        </form>
+    </div>
+
+    <div id="step-2">
+        <h2>Complete Your Payment</h2>
+        <div class="warning-text">
+            🚨 Step 1 Complete! Now, pay using the QR/Button below and upload the screenshot to finish your order.
         </div>
+        
+        <h2 id="final-amount-display" style="color: var(--dark-green); font-size: 28px;"></h2>
+        
+        <p>Scan to pay via any UPI App</p>
+        <img id="qr-code" src="" alt="UPI QR Code">
+        
+        <p>- OR -</p>
+        <a id="gpay-link" href="#" target="_blank" class="btn btn-gpay">Pay Now via UPI App</a>
+        
+        <hr style="margin: 25px 0; border: 1px solid #ccc;">
 
-        <div id="payment-section" class="payment-section">
-            <p>Scan to pay via any UPI App</p>
-            <img id="qr-code" src="" alt="UPI QR Code">
-            <p>- OR -</p>
-            <a id="gpay-link" href="#" class="btn btn-gpay">Pay Now via UPI</a>
-            
-            <label for="screenshot">Upload Payment Screenshot (Required)</label>
+        <form id="paymentForm">
+            <label for="screenshot" style="text-align: left;">Upload Payment Screenshot (Required)</label>
             <input type="file" id="screenshot" accept="image/*" required>
-        </div>
+            
+            <button type="submit" class="btn" id="finishBtn">Confirm Payment</button>
+        </form>
+    </div>
 
-        <button type="submit" class="btn" id="submitBtn">Place Order</button>
-    </form>
+    <div id="success-message">
+        <h2 style="color: var(--green);">🎉 Order Confirmed!</h2>
+        <p>Thank you for supporting Swasti! We have received your order and payment.</p>
+        <button class="btn" onclick="location.reload()">Place Another Order</button>
+    </div>
+
 </div>
 
 <script>
@@ -143,54 +183,89 @@
     const UPI_ID = "darshana.mehta1956-1@okaxis"; 
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyy4vspB0cP5Wbz5dwHxODn0aPdfjNDrGWzkChFwn2cTT7xFZzy7TNuamVzxv9zlGfQsg/exec"; 
 
+    // DOM Elements
     const pinInput = document.getElementById('pin');
     const qtyInput = document.getElementById('qty');
     const totalDisplay = document.getElementById('total-display');
-    const paymentSection = document.getElementById('payment-section');
-    const qrCodeImg = document.getElementById('qr-code');
-    const gpayLink = document.getElementById('gpay-link');
-    const form = document.getElementById('orderForm');
-    const submitBtn = document.getElementById('submitBtn');
-
+    const proceedBtn = document.getElementById('proceedBtn');
+    const finishBtn = document.getElementById('finishBtn');
+    
     let currentTotal = 0;
+    let savedOrderId = ""; // To link Step 1 and Step 2
 
-    // Calculate total whenever PIN or Quantity changes
+    // LIVE CALCULATOR
     function calculateAmount() {
         const pin = parseInt(pinInput.value);
         const qty = parseInt(qtyInput.value);
 
         if (isNaN(pin) || isNaN(qty) || pin.toString().length < 6) {
-            paymentSection.style.display = 'none';
             totalDisplay.innerText = "₹0";
             return;
         }
 
-        // Logic: Mumbai PIN codes are 400001 to 400104
-        let pricePerBottle = 410; // Default outside Mumbai
+        let pricePerBottle = 410; // Outside Mumbai
         if (pin >= 400001 && pin <= 400104) {
-            pricePerBottle = 360; // Mumbai price
+            pricePerBottle = 360; // Mumbai
         }
 
         currentTotal = pricePerBottle * qty;
         totalDisplay.innerText = `₹${currentTotal} (${qty} x ₹${pricePerBottle})`;
-
-        // Generate UPI URL (works for GPay, PhonePe, Paytm)
-        const upiString = `upi://pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${currentTotal}&cu=INR`;
-        
-        // Generate QR code image using a free public API
-        qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
-        
-        // Set deep link for mobile users
-        gpayLink.href = upiString;
-
-        paymentSection.style.display = 'block';
     }
 
     pinInput.addEventListener('input', calculateAmount);
     qtyInput.addEventListener('input', calculateAmount);
 
-    // Handle Form Submission
-    form.addEventListener('submit', async function(e) {
+    // STEP 1: SUBMIT DETAILS
+    document.getElementById('detailsForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (currentTotal === 0) {
+            alert("Please enter a valid 6-digit PIN code to calculate the total.");
+            return;
+        }
+
+        proceedBtn.innerText = "Saving Details...";
+        proceedBtn.disabled = true;
+
+        const orderData = {
+            action: 'create_order', // Tells backend this is Step 1
+            name: document.getElementById('name').value,
+            phone: document.getElementById('phone').value,
+            address: document.getElementById('address').value,
+            pin: document.getElementById('pin').value,
+            qty: document.getElementById('qty').value,
+            total: currentTotal
+        };
+
+        try {
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(orderData)
+            });
+            const result = await response.json();
+            
+            if(result.status === "success") {
+                savedOrderId = result.orderId; // Save the ID for Step 2
+                
+                // Set up Step 2 UI
+                document.getElementById('final-amount-display').innerText = `Pay ₹${currentTotal}`;
+                const upiString = `upi://pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${currentTotal}&cu=INR`;
+                document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
+                document.getElementById('gpay-link').href = upiString;
+
+                // Hide Step 1, Show Step 2
+                document.getElementById('step-1').style.display = 'none';
+                document.getElementById('step-2').style.display = 'block';
+            }
+        } catch (error) {
+            alert("Error saving details. Please try again.");
+            proceedBtn.innerText = "Submit Details & Pay";
+            proceedBtn.disabled = false;
+        }
+    });
+
+    // STEP 2: UPLOAD SCREENSHOT
+    document.getElementById('paymentForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const fileInput = document.getElementById('screenshot');
@@ -199,23 +274,18 @@
             return;
         }
 
-        submitBtn.innerText = "Processing Order...";
-        submitBtn.disabled = true;
+        finishBtn.innerText = "Verifying Payment...";
+        finishBtn.disabled = true;
 
         const file = fileInput.files;
         const reader = new FileReader();
 
         reader.onload = async function() {
-            // Get base64 string without the "data:image/jpeg;base64," prefix
             const base64Data = reader.result.split(',');
             
-            const orderData = {
-                name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
-                address: document.getElementById('address').value,
-                pin: document.getElementById('pin').value,
-                qty: document.getElementById('qty').value,
-                total: currentTotal,
+            const imageData = {
+                action: 'upload_screenshot', // Tells backend this is Step 2
+                orderId: savedOrderId, // Links image to the correct row
                 mimetype: file.type,
                 base64: base64Data
             };
@@ -223,19 +293,17 @@
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify(orderData)
+                    body: JSON.stringify(imageData)
                 });
                 
-                alert("Order placed successfully! Swasti thanks you.");
-                form.reset();
-                paymentSection.style.display = 'none';
-                totalDisplay.innerText = "₹0";
+                // Hide Step 2, Show Success Message
+                document.getElementById('step-2').style.display = 'none';
+                document.getElementById('success-message').style.display = 'block';
+                
             } catch (error) {
-                alert("There was an error submitting your order. Please try again.");
-                console.error(error);
-            } finally {
-                submitBtn.innerText = "Place Order";
-                submitBtn.disabled = false;
+                alert("Error uploading screenshot. Please try again.");
+                finishBtn.innerText = "Confirm Payment";
+                finishBtn.disabled = false;
             }
         };
 
