@@ -204,6 +204,17 @@
             font-weight: bold;
             color: var(--dark-green);
         }
+        /* iOS Safari Specifics */
+        .ios-notice {
+            display: none;
+            background: #fff3e0;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            border: 1px solid #ffe0b2;
+            color: #e65100;
+        }
     </style>
 </head>
 <body>
@@ -257,13 +268,26 @@
         <img id="qr-code" src="" alt="UPI QR Code">
         
         <div id="payment-options">
+            <div id="ios-safari-notice" class="ios-notice">
+                <b>iPhone User?</b> Safari might try to open WhatsApp with the generic link. Use the app buttons below for a direct experience:
+            </div>
+
+            <!-- Generic Link for Android / Desktop -->
             <a id="upi-link" href="#" class="btn btn-gpay">Pay via any UPI App</a>
+
+            <!-- App Specific Links for Safari to avoid WhatsApp hijacking -->
+            <div id="safari-apps" style="display: none;" class="upi-apps">
+                <a id="safari-gpay" href="#" class="btn btn-gpay">Google Pay</a>
+                <a id="safari-phonepe" href="#" class="btn btn-phonepe">PhonePe</a>
+                <a id="safari-paytm" href="#" class="btn btn-paytm">Paytm</a>
+                <a id="safari-generic" href="#" class="btn" style="background-color: #666;">Other UPI App</a>
+            </div>
             
             <p style="margin-top: 20px; font-size: 14px; opacity: 0.8;">- OR -</p>
             
             <div class="copy-box">
                 <div style="text-align: left; width: 100%;">
-                    <small style="display: block; margin-bottom: 5px; color: var(--dark-green);">Recommended for iPhone / Manual Pay:</small>
+                    <small style="display: block; margin-bottom: 5px; color: var(--dark-green);">Manual Pay (Most Reliable for iPhone):</small>
                     <div style="display: flex; align-items: center;">
                         <span id="upi-id-text">darshana.mehta1956-1@okaxis</span>
                         <button class="copy-btn" onclick="copyUPI()">Copy ID</button>
@@ -333,6 +357,10 @@
     pinInput.addEventListener('input', calculateAmount);
     qtyInput.addEventListener('input', calculateAmount);
 
+    // Detect iOS Safari
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
     // Copy UPI ID function
     window.copyUPI = function() {
         const upiId = document.getElementById('upi-id-text').innerText;
@@ -381,8 +409,20 @@
                 // Set up QR Code
                 document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
 
-                // Set up universal UPI link
-                document.getElementById('upi-link').href = upiString;
+                // Handle iOS Safari differently to avoid WhatsApp hijacking
+                if (isIOS && isSafari) {
+                    document.getElementById('ios-safari-notice').style.display = 'block';
+                    document.getElementById('upi-link').style.display = 'none';
+                    document.getElementById('safari-apps').style.display = 'grid';
+
+                    // Set specific Safari-friendly schemes
+                    document.getElementById('safari-gpay').href = `tez://upi/pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${currentTotal}&cu=INR`;
+                    document.getElementById('safari-phonepe').href = `phonepe://pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${currentTotal}&cu=INR`;
+                    document.getElementById('safari-paytm').href = `paytmmp://pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${currentTotal}&cu=INR`;
+                    document.getElementById('safari-generic').href = upiString; // Fallback to generic
+                } else {
+                    document.getElementById('upi-link').href = upiString;
+                }
 
                 // Hide Step 1, Show Step 2
                 document.getElementById('step-1').style.display = 'none';
