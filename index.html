@@ -277,11 +277,11 @@
         finishBtn.innerText = "Verifying Payment...";
         finishBtn.disabled = true;
 
-        const file = fileInput.files;
+        const file = fileInput.files[0];
         const reader = new FileReader();
 
         reader.onload = async function() {
-            const base64Data = reader.result.split(',');
+            const base64Data = reader.result.split(',')[1];
             
             const imageData = {
                 action: 'upload_screenshot', // Tells backend this is Step 2
@@ -295,10 +295,17 @@
                     method: 'POST',
                     body: JSON.stringify(imageData)
                 });
+                const result = await response.json();
                 
-                // Hide Step 2, Show Success Message
-                document.getElementById('step-2').style.display = 'none';
-                document.getElementById('success-message').style.display = 'block';
+                if (result.status === "success") {
+                    // Hide Step 2, Show Success Message
+                    document.getElementById('step-2').style.display = 'none';
+                    document.getElementById('success-message').style.display = 'block';
+                } else {
+                    alert("Error: " + (result.message || "Failed to update order status. Please contact support."));
+                    finishBtn.innerText = "Confirm Payment";
+                    finishBtn.disabled = false;
+                }
                 
             } catch (error) {
                 alert("Error uploading screenshot. Please try again.");
