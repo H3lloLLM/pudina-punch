@@ -73,6 +73,42 @@
             position: relative;
             z-index: 10;
         }
+
+        /* Mobile Optimization for "No-Scroll" Viewport */
+        @media (max-width: 600px) {
+            .hero-content {
+                padding: 20px 15px 60px; /* Reduced vertical padding */
+            }
+            .hero h1 {
+                font-size: 1.8rem; /* Smaller headline */
+                margin-bottom: 10px;
+            }
+            .hero p {
+                font-size: 0.95rem; /* Smaller text */
+                margin-bottom: 8px;
+                line-height: 1.4;
+            }
+            .container {
+                padding: 20px; /* More compact container */
+                margin-top: -40px; /* Adjusted overlap */
+            }
+            label {
+                margin-top: 10px;
+                font-size: 14px;
+            }
+            input, textarea {
+                padding: 8px;
+                font-size: 15px;
+            }
+            .summary {
+                margin-top: 15px;
+                padding: 10px;
+            }
+            .btn {
+                padding: 12px;
+                margin-top: 15px;
+            }
+        }
         label {
             font-weight: bold;
             display: block;
