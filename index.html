@@ -256,18 +256,21 @@
         <p>Scan to pay via any UPI App</p>
         <img id="qr-code" src="" alt="UPI QR Code">
         
-        <div id="ios-payment-options">
-            <p>Pay via UPI App:</p>
-            <div class="upi-apps">
-                <a id="gpay-btn" href="#" class="btn btn-gpay">Google Pay</a>
-                <a id="phonepe-btn" href="#" class="btn btn-phonepe">PhonePe</a>
-                <a id="paytm-btn" href="#" class="btn btn-paytm">Paytm</a>
+        <div id="payment-options">
+            <a id="upi-link" href="#" class="btn btn-gpay">Pay via any UPI App</a>
+            
+            <p style="margin-top: 20px; font-size: 14px; opacity: 0.8;">- OR -</p>
+            
+            <div class="copy-box">
+                <div style="text-align: left; width: 100%;">
+                    <small style="display: block; margin-bottom: 5px; color: var(--dark-green);">Recommended for iPhone / Manual Pay:</small>
+                    <div style="display: flex; align-items: center;">
+                        <span id="upi-id-text">darshana.mehta1956-1@okaxis</span>
+                        <button class="copy-btn" onclick="copyUPI()">Copy ID</button>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div class="copy-box">
-            <span id="upi-id-text">darshana.mehta1956-1@okaxis</span>
-            <button class="copy-btn" onclick="copyUPI()">Copy ID</button>
+            <p style="font-size: 12px; color: #666; margin-top: -10px;">Copy ID and paste in GPay, PhonePe, or Paytm</p>
         </div>
         
         <hr style="margin: 25px 0; border: 1px solid #ccc;">
@@ -378,19 +381,8 @@
                 // Set up QR Code
                 document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
 
-                // App-specific links for better iOS/Android compatibility
-                document.getElementById('gpay-btn').href = `googlegpay://pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${currentTotal}&cu=INR`;
-                document.getElementById('phonepe-btn').href = `phonepe://pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${currentTotal}&cu=INR`;
-                document.getElementById('paytm-btn').href = `paytmmp://pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${currentTotal}&cu=INR`;
-
-                // Fallback for the buttons if the specific app scheme isn't supported
-                const handleAppClick = (e, scheme) => {
-                    setTimeout(() => {
-                        if (confirm("If the app didn't open, would you like to try the generic payment link?")) {
-                            window.location.href = upiString;
-                        }
-                    }, 2500);
-                };
+                // Set up universal UPI link
+                document.getElementById('upi-link').href = upiString;
 
                 // Hide Step 1, Show Step 2
                 document.getElementById('step-1').style.display = 'none';
