@@ -121,9 +121,45 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
-        .btn-gpay {
-            background-color: #104A25;
+        .btn-gpay { background-color: #4285F4; }
+        .btn-phonepe { background-color: #5f259f; }
+        .btn-paytm { background-color: #00baf2; }
+        
+        .copy-box {
+            display: flex;
+            align-items: center;
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px dashed var(--green);
         }
+        .copy-box span {
+            flex-grow: 1;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .copy-btn {
+            background: var(--green);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .upi-apps {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .upi-apps .btn {
+            margin-top: 0;
+            padding: 12px 5px;
+            font-size: 14px;
+        }
+        .upi-apps .btn-gpay { grid-column: span 2; }
         /* Hide Step 2 initially */
         #step-2, #success-message {
             display: none;
@@ -220,8 +256,19 @@
         <p>Scan to pay via any UPI App</p>
         <img id="qr-code" src="" alt="UPI QR Code">
         
-        <p>- OR -</p>
-        <a id="gpay-link" href="#" target="_blank" class="btn btn-gpay">Pay Now via UPI App</a>
+        <div id="ios-payment-options">
+            <p>Pay via UPI App:</p>
+            <div class="upi-apps">
+                <a id="gpay-btn" href="#" class="btn btn-gpay">Google Pay</a>
+                <a id="phonepe-btn" href="#" class="btn btn-phonepe">PhonePe</a>
+                <a id="paytm-btn" href="#" class="btn btn-paytm">Paytm</a>
+            </div>
+        </div>
+
+        <div class="copy-box">
+            <span id="upi-id-text">darshana.mehta1956-1@okaxis</span>
+            <button class="copy-btn" onclick="copyUPI()">Copy ID</button>
+        </div>
         
         <hr style="margin: 25px 0; border: 1px solid #ccc;">
 
@@ -283,6 +330,14 @@
     pinInput.addEventListener('input', calculateAmount);
     qtyInput.addEventListener('input', calculateAmount);
 
+    // Copy UPI ID function
+    window.copyUPI = function() {
+        const upiId = document.getElementById('upi-id-text').innerText;
+        navigator.clipboard.writeText(upiId).then(() => {
+            alert("UPI ID Copied: " + upiId);
+        });
+    }
+
     // STEP 1: SUBMIT DETAILS
     document.getElementById('detailsForm').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -296,7 +351,7 @@
         proceedBtn.disabled = true;
 
         const orderData = {
-            action: 'create_order', // Tells backend this is Step 1
+            action: 'create_order', 
             name: document.getElementById('name').value,
             phone: document.getElementById('phone').value,
             address: document.getElementById('address').value,
@@ -313,13 +368,29 @@
             const result = await response.json();
             
             if(result.status === "success") {
-                savedOrderId = result.orderId; // Save the ID for Step 2
+                savedOrderId = result.orderId;
                 
                 // Set up Step 2 UI
                 document.getElementById('final-amount-display').innerText = `Pay ₹${currentTotal}`;
+                
                 const upiString = `upi://pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${currentTotal}&cu=INR`;
+                
+                // Set up QR Code
                 document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
-                document.getElementById('gpay-link').href = upiString;
+
+                // App-specific links for better iOS/Android compatibility
+                document.getElementById('gpay-btn').href = `googlegpay://pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${currentTotal}&cu=INR`;
+                document.getElementById('phonepe-btn').href = `phonepe://pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${currentTotal}&cu=INR`;
+                document.getElementById('paytm-btn').href = `paytmmp://pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${currentTotal}&cu=INR`;
+
+                // Fallback for the buttons if the specific app scheme isn't supported
+                const handleAppClick = (e, scheme) => {
+                    setTimeout(() => {
+                        if (confirm("If the app didn't open, would you like to try the generic payment link?")) {
+                            window.location.href = upiString;
+                        }
+                    }, 2500);
+                };
 
                 // Hide Step 1, Show Step 2
                 document.getElementById('step-1').style.display = 'none';
