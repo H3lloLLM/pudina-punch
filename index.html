@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F9N937Z7Y2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-F9N937Z7Y2');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Pudina Punch by Swasti</title>
@@ -357,6 +366,53 @@
 </div>
 
 <script>
+    // --- ANALYTICS TRACKING ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // 6. Started entering form data
+        const detailsForm = document.getElementById('detailsForm');
+        let hasTrackedFormStart = false;
+        detailsForm.addEventListener('input', function() {
+            if (!hasTrackedFormStart) {
+                gtag('event', 'form_start');
+                hasTrackedFormStart = true;
+            }
+        });
+
+        // 7. Filled all fields upto pincode
+        let hasTrackedPin = false;
+        document.getElementById('pin').addEventListener('blur', function() {
+            if (!hasTrackedPin && this.value.length >= 6) {
+                gtag('event', 'filled_pincode');
+                hasTrackedPin = true;
+            }
+        });
+
+        // 10. Clicked on UPI buttons
+        // This targets all links/buttons in the payment-options div
+        const upiOptions = document.getElementById('payment-options');
+        upiOptions.addEventListener('click', function(e) {
+            const target = e.target.closest('a, button');
+            if (target) {
+                const btnLabel = target.innerText || target.id || 'upi_action';
+                gtag('event', 'click_upi_button', {
+                    'button_label': btnLabel.trim()
+                });
+            }
+        });
+
+        // 11. Clicked on the "browse" button
+        document.getElementById('screenshot').addEventListener('click', function() {
+            gtag('event', 'click_browse_screenshot');
+        });
+
+        // 12. Uploaded payment screenshot successfully (selection)
+        document.getElementById('screenshot').addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                gtag('event', 'screenshot_selected');
+            }
+        });
+    });
+
     // --- SETTINGS ---
     const UPI_ID = "darshana.mehta1956-1@okaxis"; 
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyy4vspB0cP5Wbz5dwHxODn0aPdfjNDrGWzkChFwn2cTT7xFZzy7TNuamVzxv9zlGfQsg/exec"; 
@@ -409,6 +465,9 @@
     document.getElementById('detailsForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
+        // 8. Clicked on "submit details and pay" button
+        gtag('event', 'click_submit_details');
+
         if (currentTotal === 0) {
             alert("Please enter a valid 6-digit PIN code to calculate the total.");
             return;
@@ -435,6 +494,9 @@
             const result = await response.json();
             
             if(result.status === "success") {
+                // 9. Reached payment part of the form
+                gtag('event', 'reach_payment_step');
+
                 savedOrderId = result.orderId;
                 
                 // Set up Step 2 UI
@@ -475,6 +537,9 @@
     document.getElementById('paymentForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
+        // 13. Clicked on "Confirm Payment" button
+        gtag('event', 'click_confirm_payment');
+
         const fileInput = document.getElementById('screenshot');
         if (fileInput.files.length === 0) {
             alert("Please upload a payment screenshot.");
@@ -532,6 +597,9 @@
                 clearInterval(progressInterval);
                 
                 if (result.status === "success") {
+                    // 14. Reached "Order Confirmed!" screen
+                    gtag('event', 'order_confirmed');
+
                     updateProgress(100, "Order Confirmed!");
                     setTimeout(() => {
                         document.getElementById('step-2').style.display = 'none';
