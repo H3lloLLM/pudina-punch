@@ -414,8 +414,10 @@
     });
 
     // --- SETTINGS ---
-    const UPI_ID = "darshana.mehta1956-1@okaxis"; 
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_1MRWnQk0kZKpkwW2y7g34ofNbTjFVCinsvNE6ELMqmyYlyDidoJClthfDPmUgF6I3A/exec"; 
+    const UPI_ID = "darshana.mehta1956-1@okaxis";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-GG2g43JjJJr2RdW4lY_GLjm2iXwHUUFA_22RJIyY-gCM4zvtdaEmKgZdKpGerfWHqg/exec";
+    const BASE_PRICE_PER_BOTTLE = 300;
+    const ORDER_MARKUP = 5;
 
     // DOM Elements
     const pinInput = document.getElementById('pin');
@@ -423,32 +425,65 @@
     const totalDisplay = document.getElementById('total-display');
     const proceedBtn = document.getElementById('proceedBtn');
     const finishBtn = document.getElementById('finishBtn');
-    
+
     let currentTotal = 0;
     let savedOrderId = ""; // To link Step 1 and Step 2
 
+    // Debounce function
+    function debounce(func, timeout = 500) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => { func.apply(this, args); }, timeout);
+        };
+    }
+
     // LIVE CALCULATOR
-    function calculateAmount() {
-        const pin = parseInt(pinInput.value);
+    async function calculateAmount() {
+        const pin = pinInput.value;
         const qty = parseInt(qtyInput.value);
 
-        if (isNaN(pin) || isNaN(qty) || pin.toString().length < 6) {
+        if (!pin || pin.length < 6 || isNaN(qty) || qty < 1) {
             totalDisplay.innerText = "₹0";
+            currentTotal = 0;
             return;
         }
 
-        let pricePerBottle = 410; // Outside Mumbai
-        if (pin >= 400001 && pin <= 400104) {
-            pricePerBottle = 360; // Mumbai
-        }
+        totalDisplay.innerText = "Calculating shipping...";
+        proceedBtn.disabled = true;
 
-        currentTotal = pricePerBottle * qty;
-        totalDisplay.innerText = `₹${currentTotal} (${qty} x ₹${pricePerBottle})`;
+        try {
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'get_shipping_rate',
+                    to_pincode: pin,
+                    qty: qty
+                })
+            });
+            const result = await response.json();
+
+            if (result.status === "success") {
+                const shippingRate = result.rate;
+                const baseTotal = BASE_PRICE_PER_BOTTLE * qty;
+                currentTotal = baseTotal + shippingRate + ORDER_MARKUP;
+                totalDisplay.innerText = `₹${currentTotal} (₹${baseTotal} + ₹${shippingRate} Shipping + ₹${ORDER_MARKUP} Fee)`;
+                proceedBtn.disabled = false;
+            } else {
+                totalDisplay.innerText = "Error calculating shipping. Please check pincode.";
+                currentTotal = 0;
+            }
+        } catch (error) {
+            console.error("Shipping calculation failed:", error);
+            totalDisplay.innerText = "Shipping service unavailable.";
+            currentTotal = 0;
+        }
     }
 
-    pinInput.addEventListener('input', calculateAmount);
-    qtyInput.addEventListener('input', calculateAmount);
+    const debouncedCalculate = debounce(calculateAmount, 600);
 
+    pinInput.addEventListener('input', debouncedCalculate);
+    qtyInput.addEventListener('input', debouncedCalculate);
     // Detect iOS Safari
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
