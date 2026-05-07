@@ -469,6 +469,17 @@
             return;
         }
 
+        const pinNumber = parseInt(pin, 10);
+        if (pinNumber < 110001 || pinNumber > 855117) {
+            totalDisplay.innerText = "Please enter a valid PIN code.";
+            totalDisplay.style.display = 'block';
+            breakdown.style.display = 'none';
+            currentTotal = 0;
+            currentShippingRate = 0;
+            proceedBtn.disabled = true;
+            return;
+        }
+
         totalDisplay.innerText = "Calculating shipping...";
         totalDisplay.style.display = 'block';
         breakdown.style.display = 'none';
