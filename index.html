@@ -288,13 +288,28 @@
             <textarea id="address" rows="3" required></textarea>
 
             <label for="pin">PIN Code</label>
-            <input type="number" id="pin" required placeholder="e.g., 400069">
+            <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="pin" required placeholder="e.g., 110001">
 
             <label for="qty">Number of Bottles</label>
-            <input type="number" id="qty" min="1" value="1" required>
+            <input type="text" inputmode="numeric" pattern="[1-9][0-9]*" id="qty" value="" required oninput="this.value = this.value.replace(/[^0-9]/g, ''); if (this.value === '0') this.value = '';">
 
             <div class="summary">
-                <h2 id="total-display">₹0</h2>
+                <div id="breakdown" style="display: none; text-align: left;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Pudina Punch (x<span id="breakdown-qty">0</span>)</span>
+                        <span id="breakdown-base">₹0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Delivery Cost</span>
+                        <span id="breakdown-delivery">₹0</span>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid var(--green); margin: 10px 0;">
+                    <div style="display: flex; justify-content: space-between; font-weight: bold; color: var(--dark-green); font-size: 1.2em;">
+                        <span>Total</span>
+                        <span id="breakdown-total">₹0</span>
+                    </div>
+                </div>
+                <h2 id="total-display" style="margin: 0;">₹0</h2>
             </div>
 
             <button type="submit" class="btn" id="proceedBtn">Submit Details & Pay</button>
@@ -415,7 +430,7 @@
 
     // --- SETTINGS ---
     const UPI_ID = "darshana.mehta1956-1@okaxis";
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-GG2g43JjJJr2RdW4lY_GLjm2iXwHUUFA_22RJIyY-gCM4zvtdaEmKgZdKpGerfWHqg/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby4lgNvHQjeWUd1T4oDdnB2aAiXW1ZXboTub4cyQhlXjf8ysjJPKBjDi8r6N-q4klHfUQ/exec";
     const BASE_PRICE_PER_BOTTLE = 300;
     const ORDER_MARKUP = 5;
 
@@ -427,6 +442,7 @@
     const finishBtn = document.getElementById('finishBtn');
 
     let currentTotal = 0;
+    let currentShippingRate = 0;
     let savedOrderId = ""; // To link Step 1 and Step 2
 
     // Debounce function
@@ -442,14 +458,20 @@
     async function calculateAmount() {
         const pin = pinInput.value;
         const qty = parseInt(qtyInput.value);
+        const breakdown = document.getElementById('breakdown');
 
         if (!pin || pin.length < 6 || isNaN(qty) || qty < 1) {
             totalDisplay.innerText = "₹0";
+            totalDisplay.style.display = 'block';
+            breakdown.style.display = 'none';
             currentTotal = 0;
+            currentShippingRate = 0;
             return;
         }
 
         totalDisplay.innerText = "Calculating shipping...";
+        totalDisplay.style.display = 'block';
+        breakdown.style.display = 'none';
         proceedBtn.disabled = true;
 
         try {
@@ -465,18 +487,36 @@
 
             if (result.status === "success") {
                 const shippingRate = result.rate;
+                const deliveryCost = Math.ceil(shippingRate + ORDER_MARKUP);
+                currentShippingRate = deliveryCost;
+                
                 const baseTotal = BASE_PRICE_PER_BOTTLE * qty;
-                currentTotal = baseTotal + shippingRate + ORDER_MARKUP;
-                totalDisplay.innerText = `₹${currentTotal} (₹${baseTotal} + ₹${shippingRate} Shipping + ₹${ORDER_MARKUP} Fee)`;
+                currentTotal = baseTotal + deliveryCost;
+
+                // Update Detailed Breakdown
+                document.getElementById('breakdown-qty').innerText = qty;
+                document.getElementById('breakdown-base').innerText = `₹${baseTotal}`;
+                document.getElementById('breakdown-delivery').innerText = `₹${deliveryCost}`;
+                document.getElementById('breakdown-total').innerText = `₹${currentTotal}`;
+                
+                breakdown.style.display = 'block';
+                totalDisplay.style.display = 'none';
+                
                 proceedBtn.disabled = false;
             } else {
                 totalDisplay.innerText = "Error calculating shipping. Please check pincode.";
+                totalDisplay.style.display = 'block';
+                breakdown.style.display = 'none';
                 currentTotal = 0;
+                currentShippingRate = 0;
             }
         } catch (error) {
             console.error("Shipping calculation failed:", error);
             totalDisplay.innerText = "Shipping service unavailable.";
+            totalDisplay.style.display = 'block';
+            breakdown.style.display = 'none';
             currentTotal = 0;
+            currentShippingRate = 0;
         }
     }
 
@@ -518,7 +558,8 @@
             address: document.getElementById('address').value,
             pin: document.getElementById('pin').value,
             qty: document.getElementById('qty').value,
-            total: currentTotal
+            total: currentTotal,
+            shipping: currentShippingRate
         };
 
         try {
