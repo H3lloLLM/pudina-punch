@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-F9N937Z7Y2"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-F9N937Z7Y2');
     </script>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Pudina Punch by Swasti</title>
     
@@ -397,51 +396,67 @@
 </div>
 
 <script>
-    // --- ANALYTICS TRACKING ---
+    // --- NEW ANALYTICS TRACKING ---
+    const trackEvent = (eventName, params = {}) => {
+        if (typeof gtag === 'function') {
+            gtag('event', eventName, params);
+        }
+    };
+
     document.addEventListener('DOMContentLoaded', () => {
-        // 6. Started entering form data
-        const detailsForm = document.getElementById('detailsForm');
-        let hasTrackedFormStart = false;
-        detailsForm.addEventListener('input', function() {
-            if (!hasTrackedFormStart) {
-                gtag('event', 'form_start');
-                hasTrackedFormStart = true;
-            }
-        });
+        // 1 & 2. User lands on page and User Type tracking
+        const isNewUser = !localStorage.getItem('returning_user');
+        if (isNewUser) {
+            localStorage.setItem('returning_user', 'true');
+        }
+        trackEvent('page_landed', { 'user_type': isNewUser ? 'new' : 'old' });
 
-        // 7. Filled all fields upto pincode
-        let hasTrackedPin = false;
-        document.getElementById('pin').addEventListener('blur', function() {
-            if (!hasTrackedPin && this.value.length >= 6) {
-                gtag('event', 'filled_pincode');
-                hasTrackedPin = true;
-            }
-        });
+        // 3-7. Filling form fields
+        const fields = [
+            { id: 'name', event: 'fill_name' },
+            { id: 'phone', event: 'fill_phone' },
+            { id: 'address', event: 'fill_address' },
+            { id: 'pin', event: 'fill_pin' },
+            { id: 'qty', event: 'fill_qty' }
+        ];
 
-        // 10. Clicked on UPI buttons
-        // This targets all links/buttons in the payment-options div
-        const upiOptions = document.getElementById('payment-options');
-        upiOptions.addEventListener('click', function(e) {
-            const target = e.target.closest('a, button');
-            if (target) {
-                const btnLabel = target.innerText || target.id || 'upi_action';
-                gtag('event', 'click_upi_button', {
-                    'button_label': btnLabel.trim()
+        fields.forEach(field => {
+            const el = document.getElementById(field.id);
+            if (el) {
+                el.addEventListener('blur', () => {
+                    if (el.value.trim() !== '') {
+                        trackEvent(field.event);
+                    }
                 });
             }
         });
 
-        // 11. Clicked on the "browse" button
-        document.getElementById('screenshot').addEventListener('click', function() {
-            gtag('event', 'click_browse_screenshot');
-        });
+        // 11. User clicks on payment buttons
+        const upiOptions = document.getElementById('payment-options');
+        if (upiOptions) {
+            upiOptions.addEventListener('click', (e) => {
+                const target = e.target.closest('a, button');
+                if (target) {
+                    const label = target.innerText.trim() || target.id;
+                    trackEvent('click_payment_button', { 'method': label });
+                }
+            });
+        }
 
-        // 12. Uploaded payment screenshot successfully (selection)
-        document.getElementById('screenshot').addEventListener('change', function() {
-            if (this.files && this.files.length > 0) {
-                gtag('event', 'screenshot_selected');
-            }
-        });
+        // 12. User clicks on "Browse" button
+        const screenshotInput = document.getElementById('screenshot');
+        if (screenshotInput) {
+            screenshotInput.addEventListener('click', () => {
+                trackEvent('click_browse_screenshot');
+            });
+
+            // 15. Successfully Selected Screenshot
+            screenshotInput.addEventListener('change', () => {
+                if (screenshotInput.files && screenshotInput.files.length > 0) {
+                    trackEvent('screenshot_selected');
+                }
+            });
+        }
     });
 
     // --- SETTINGS ---
@@ -529,6 +544,9 @@
                 breakdown.style.display = 'block';
                 totalDisplay.style.display = 'none';
                 
+                // 8 & 9. Total shown on screen and tracking its value
+                trackEvent('total_shown', { 'total_value': currentTotal });
+                
                 proceedBtn.disabled = false;
             } else {
                 totalDisplay.innerText = "Error calculating shipping. Please check pincode.";
@@ -566,14 +584,11 @@
     // STEP 1: SUBMIT DETAILS
     document.getElementById('detailsForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        
-        // 8. Clicked on "submit details and pay" button
-        gtag('event', 'click_submit_details');
 
+        // 10. User clicks on "Submit Details & Pay"
+        trackEvent('click_submit_details');
+        
         if (currentTotal === 0) {
-            alert("Please enter a valid 6-digit PIN code to calculate the total.");
-            return;
-        }
 
         proceedBtn.innerText = "Saving Details...";
         proceedBtn.disabled = true;
@@ -597,9 +612,6 @@
             const result = await response.json();
             
             if(result.status === "success") {
-                // 9. Reached payment part of the form
-                gtag('event', 'reach_payment_step');
-
                 savedOrderId = result.orderId;
                 
                 // Set up Step 2 UI
@@ -640,8 +652,8 @@
     document.getElementById('paymentForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        // 13. Clicked on "Confirm Payment" button
-        gtag('event', 'click_confirm_payment');
+        // 13. User clicks on "Confirm Payment" button
+        trackEvent('click_confirm_payment');
 
         const fileInput = document.getElementById('screenshot');
         if (fileInput.files.length === 0) {
@@ -700,9 +712,9 @@
                 clearInterval(progressInterval);
                 
                 if (result.status === "success") {
-                    // 14. Reached "Order Confirmed!" screen
-                    gtag('event', 'order_confirmed');
-
+                    // 14. User lands on final "Order Confirmed" screen
+                    trackEvent('order_confirmed');
+                    
                     updateProgress(100, "Order Confirmed!");
                     setTimeout(() => {
                         document.getElementById('step-2').style.display = 'none';
