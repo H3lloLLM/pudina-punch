@@ -333,61 +333,43 @@
 
     <div id="step-2">
         <h2>Complete Your Payment</h2>
-        <div class="warning-text">
-            🚨 Step 1 Complete! Now, pay using the QR/Button below and upload the screenshot to finish your order.
+        <div class="warning-text" style="background: #e8f5e9; color: var(--dark-green); border: 1px solid var(--green);">
+            ✅ Order Details Saved! Please complete your payment below.
         </div>
         
-        <h2 id="final-amount-display" style="color: var(--dark-green); font-size: 28px;"></h2>
-
-        <div id="personal-upi-notice" style="background: #e8f5e9; border: 2px solid var(--green); border-radius: 8px; padding: 12px; margin: 15px auto; max-width: 400px; color: var(--dark-green); font-weight: bold; font-size: 14px; line-height: 1.5; text-align: center;">
-            ℹ️ UPI Security Note: Please enter the amount <span id="notice-amount" style="color: #d32f2f; font-size: 16px;">₹0</span> manually in your UPI app after clicking any button or scanning the QR code.
-        </div>
+        <h2 id="final-amount-display" style="color: var(--dark-green); font-size: 32px; margin: 10px 0;"></h2>
         
-        <p>Scan to pay via any UPI App</p>
-        <img id="qr-code" src="" alt="UPI QR Code">
-        
-        <div id="payment-options">
-            <div id="ios-safari-notice" class="ios-notice">
-                <b>iPhone User?</b> Safari might try to open WhatsApp with the generic link. Use the app buttons below for a direct experience:
-            </div>
-
-            <!-- Generic Link for Android / Desktop -->
-            <a id="upi-link" href="#" class="btn btn-gpay">Pay via any UPI App</a>
-
-            <!-- App Specific Links for Safari to avoid WhatsApp hijacking -->
-            <div id="safari-apps" style="display: none;" class="upi-apps">
-                <a id="safari-gpay" href="#" class="btn btn-gpay">Google Pay</a>
-                <a id="safari-phonepe" href="#" class="btn btn-phonepe">PhonePe</a>
-                <a id="safari-paytm" href="#" class="btn btn-paytm">Paytm</a>
-                <a id="safari-generic" href="#" class="btn" style="background-color: #666;">Other UPI App</a>
+        <div id="payment-options" style="margin-top: 20px;">
+            <p style="margin-bottom: 10px; font-weight: bold;">Tap to Pay (Amount Prefilled)</p>
+            <div class="upi-apps" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;">
+                <a id="btn-gpay" href="#" class="btn btn-gpay" style="margin:0; padding:15px; font-size:16px;">Google Pay</a>
+                <a id="btn-phonepe" href="#" class="btn btn-phonepe" style="margin:0; padding:15px; font-size:16px;">PhonePe</a>
+                <a id="btn-paytm" href="#" class="btn btn-paytm" style="margin:0; padding:15px; font-size:16px;">Paytm</a>
+                <a id="btn-other" href="#" class="btn" style="background-color: var(--green); margin:0; padding:15px; font-size:16px;">Other UPI</a>
             </div>
             
-            <p style="margin-top: 20px; font-size: 14px; opacity: 0.8;">- OR -</p>
-            
-            <div class="copy-box">
-                <div style="text-align: left; width: 100%;">
-                    <small style="display: block; margin-bottom: 5px; color: var(--dark-green);">Manual Pay (Most Reliable for iPhone):</small>
-                    <div style="display: flex; align-items: center;">
-                        <span id="upi-id-text">arshmehta-2@oksbi</span>
-                        <button class="copy-btn" onclick="copyUPI()">Copy ID</button>
-                    </div>
-                </div>
+            <p style="margin: 20px 0 10px; font-size: 14px; opacity: 0.8;">- OR SCAN QR -</p>
+            <img id="qr-code" src="" alt="UPI QR Code" style="margin: 0 auto; width: 180px; height: 180px; border: 2px solid var(--green); border-radius: 10px; padding: 10px; display: block;">
+
+            <p style="margin: 20px 0 10px; font-size: 14px; opacity: 0.8;">- OR COPY ID -</p>
+            <div class="copy-box" style="display: flex; align-items: center; background: #f1f1f1; padding: 12px; border-radius: 8px; border: 1px dashed var(--green); justify-content: space-between;">
+                <span id="upi-id-text" style="font-family: monospace; font-size: 16px; font-weight: bold; flex-grow: 1; text-align: left;">arshmehta-2@oksbi</span>
+                <button type="button" class="copy-btn" onclick="copyUPI()" style="background: var(--green); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold;">COPY</button>
             </div>
-            <p style="font-size: 12px; color: #666; margin-top: -10px;">Copy ID and paste in GPay, PhonePe, or Paytm</p>
         </div>
         
-        <hr style="margin: 25px 0; border: 1px solid #ccc;">
+        <hr style="margin: 25px 0; border: 1px solid #eee;">
 
         <form id="paymentForm">
-            <label for="screenshot" style="text-align: left;">Upload Payment Screenshot (Required)</label>
-            <input type="file" id="screenshot" accept="image/*" required>
+            <label for="screenshot" style="text-align: left; font-size: 16px;">Upload Payment Screenshot (Required)</label>
+            <input type="file" id="screenshot" accept="image/*" required style="border: 2px dashed var(--green); padding: 15px; background: #f9f9f9; cursor: pointer; box-sizing: border-box; width: 100%;">
             
             <div class="progress-container" id="progressContainer">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
-            <p id="progressText" class="progress-text" style="display: none;">Starting...</p>
+            <p id="progressText" class="progress-text" style="display: none; text-align: center;">Starting...</p>
 
-            <button type="submit" class="btn" id="finishBtn">Confirm Payment</button>
+            <button type="submit" class="btn" id="finishBtn" style="font-size: 20px; padding: 18px;">Confirm Order</button>
         </form>
     </div>
 
@@ -607,28 +589,25 @@
                 
                 // Set up Step 2 UI
                 document.getElementById('final-amount-display').innerText = `Pay ₹${currentTotal}`;
-                document.getElementById('notice-amount').innerText = `₹${currentTotal}`;
                 
-                // Omit 'am' (amount) and 'tn' (note) for personal (P2P) UPI IDs to prevent bank security blocks
-                const upiString = `upi://pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&cu=INR`;
+                const formattedTotal = currentTotal.toFixed(2);
+                
+                // Constructing deep links WITH amount, and adding transaction ref (tr) which helps sometimes.
+                const payeeName = encodeURIComponent("ARSH SOMDATT MEHTA");
+                const note = encodeURIComponent("Pudina Punch Order " + savedOrderId);
+                const trRef = savedOrderId; // Transaction reference
+                
+                const baseParams = `pa=${UPI_ID}&pn=${payeeName}&am=${formattedTotal}&cu=INR&tn=${note}&tr=${trRef}`;
+                const upiString = `upi://pay?${baseParams}`;
                 
                 // Set up QR Code
                 document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
 
-                // Handle iOS Safari differently to avoid WhatsApp hijacking
-                if (isIOS && isSafari) {
-                    document.getElementById('ios-safari-notice').style.display = 'block';
-                    document.getElementById('upi-link').style.display = 'none';
-                    document.getElementById('safari-apps').style.display = 'grid';
-
-                    // Set specific Safari-friendly schemes (omitting am & tn for security compliance)
-                    document.getElementById('safari-gpay').href = `tez://upi/pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&cu=INR`;
-                    document.getElementById('safari-phonepe').href = `phonepe://pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&cu=INR`;
-                    document.getElementById('safari-paytm').href = `paytmmp://pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&cu=INR`;
-                    document.getElementById('safari-generic').href = upiString; // Fallback to generic
-                } else {
-                    document.getElementById('upi-link').href = upiString;
-                }
+                // Set deep links directly (working around Safari by offering direct app intents to everyone)
+                document.getElementById('btn-gpay').href = `tez://upi/pay?${baseParams}`;
+                document.getElementById('btn-phonepe').href = `phonepe://pay?${baseParams}`;
+                document.getElementById('btn-paytm').href = `paytmmp://pay?${baseParams}`;
+                document.getElementById('btn-other').href = upiString;
 
                 // Hide Step 1, Show Step 2
                 document.getElementById('step-1').style.display = 'none';
