@@ -338,6 +338,10 @@
         </div>
         
         <h2 id="final-amount-display" style="color: var(--dark-green); font-size: 28px;"></h2>
+
+        <div id="personal-upi-notice" style="background: #e8f5e9; border: 2px solid var(--green); border-radius: 8px; padding: 12px; margin: 15px auto; max-width: 400px; color: var(--dark-green); font-weight: bold; font-size: 14px; line-height: 1.5; text-align: center;">
+            ℹ️ UPI Security Note: Please enter the amount <span id="notice-amount" style="color: #d32f2f; font-size: 16px;">₹0</span> manually in your UPI app after clicking any button or scanning the QR code.
+        </div>
         
         <p>Scan to pay via any UPI App</p>
         <img id="qr-code" src="" alt="UPI QR Code">
@@ -603,9 +607,10 @@
                 
                 // Set up Step 2 UI
                 document.getElementById('final-amount-display').innerText = `Pay ₹${currentTotal}`;
+                document.getElementById('notice-amount').innerText = `₹${currentTotal}`;
                 
-                const formattedTotal = currentTotal.toFixed(2);
-                const upiString = `upi://pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
+                // Omit 'am' (amount) and 'tn' (note) for personal (P2P) UPI IDs to prevent bank security blocks
+                const upiString = `upi://pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&cu=INR`;
                 
                 // Set up QR Code
                 document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
@@ -616,10 +621,10 @@
                     document.getElementById('upi-link').style.display = 'none';
                     document.getElementById('safari-apps').style.display = 'grid';
 
-                    // Set specific Safari-friendly schemes
-                    document.getElementById('safari-gpay').href = `tez://upi/pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
-                    document.getElementById('safari-phonepe').href = `phonepe://pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
-                    document.getElementById('safari-paytm').href = `paytmmp://pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
+                    // Set specific Safari-friendly schemes (omitting am & tn for security compliance)
+                    document.getElementById('safari-gpay').href = `tez://upi/pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&cu=INR`;
+                    document.getElementById('safari-phonepe').href = `phonepe://pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&cu=INR`;
+                    document.getElementById('safari-paytm').href = `paytmmp://pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&cu=INR`;
                     document.getElementById('safari-generic').href = upiString; // Fallback to generic
                 } else {
                     document.getElementById('upi-link').href = upiString;
