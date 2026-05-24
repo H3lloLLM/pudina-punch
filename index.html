@@ -605,7 +605,7 @@
                 document.getElementById('final-amount-display').innerText = `Pay ₹${currentTotal}`;
                 
                 const formattedTotal = currentTotal.toFixed(2);
-                const upiString = `upi://pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${formattedTotal}&cu=INR&mc=0000&tr=${savedOrderId}`;
+                const upiString = `upi://pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
                 
                 // Set up QR Code
                 document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
@@ -617,9 +617,9 @@
                     document.getElementById('safari-apps').style.display = 'grid';
 
                     // Set specific Safari-friendly schemes
-                    document.getElementById('safari-gpay').href = `tez://upi/pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${formattedTotal}&cu=INR&mc=0000&tr=${savedOrderId}`;
-                    document.getElementById('safari-phonepe').href = `phonepe://pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${formattedTotal}&cu=INR&mc=0000&tr=${savedOrderId}`;
-                    document.getElementById('safari-paytm').href = `paytmmp://pay?pa=${UPI_ID}&pn=Pudina%20Punch&am=${formattedTotal}&cu=INR&mc=0000&tr=${savedOrderId}`;
+                    document.getElementById('safari-gpay').href = `tez://upi/pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
+                    document.getElementById('safari-phonepe').href = `phonepe://pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
+                    document.getElementById('safari-paytm').href = `paytmmp://pay?pa=${UPI_ID}&pn=ARSH%20SOMDATT%20MEHTA&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
                     document.getElementById('safari-generic').href = upiString; // Fallback to generic
                 } else {
                     document.getElementById('upi-link').href = upiString;
