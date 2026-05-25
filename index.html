@@ -173,8 +173,11 @@
             cursor: not-allowed;
         }
         .btn-gpay { background-color: #4285F4; }
+        .btn-gpay:hover { background-color: #357ae8; }
         .btn-phonepe { background-color: #5f259f; }
+        .btn-phonepe:hover { background-color: #4d1e82; }
         .btn-paytm { background-color: #00baf2; }
+        .btn-paytm:hover { background-color: #009ecd; }
         
         .copy-box {
             display: flex;
@@ -318,35 +321,68 @@
                 <h2 id="total-display" style="margin: 0;">₹0</h2>
             </div>
             
-            <div id="payment-section" style="display: none; margin-top: 25px; padding-top: 20px; border-top: 2px dashed var(--green);">
-                <h2 style="margin-top: 0;">Make Your Payment</h2>
-                <div id="personal-upi-notice" style="background: #fff3e0; border: 2px solid #ff9800; border-radius: 8px; padding: 15px; margin: 15px auto; color: #e65100; font-weight: bold; font-size: 15px; line-height: 1.5; text-align: left;">
-                    ℹ️ <b>Security Note:</b> Please manually enter the exact total amount in your UPI app.
+            <button type="submit" class="btn" id="submitDetailsBtn">Submit Details & Pay</button>
+            
+            <div id="detailsProgress" style="display: none; margin-top: 15px; text-align: center;">
+                <div class="progress-container" style="display: block; width: 100%; background-color: #eee; border-radius: 10px; overflow: hidden; border: 1px solid #ccc; height: 10px;">
+                    <div id="detailsProgressBar" style="width: 0%; height: 100%; background-color: var(--green); transition: width 0.3s ease;"></div>
                 </div>
-                
-                <p style="font-size: 14px; margin-bottom: 10px; font-weight: bold;">Method 1: Copy this Phone Number (GPay, PhonePe, Paytm)</p>
-                <div class="copy-box" style="display: flex; align-items: center; background: #f1f1f1; padding: 12px; border-radius: 8px; border: 2px dashed var(--green); justify-content: center; max-width: 380px; margin: 0 auto 10px; flex-wrap: wrap; gap: 10px;">
-                    <span id="phone-pay-text" style="font-family: monospace; font-size: 18px; font-weight: bold; flex-grow: 1; text-align: center; color: var(--dark-green);">9869372313</span>
-                    <button type="button" class="copy-btn" onclick="copyText('phone-pay-text')" style="background: var(--green); color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; transition: background 0.2s; white-space: nowrap;">COPY</button>
-                </div>
-                
-                <p style="font-size: 14px; margin: 15px 0 10px; font-weight: bold;">Method 2: Copy this UPI ID</p>
-                <div class="copy-box" style="display: flex; align-items: center; background: #f1f1f1; padding: 12px; border-radius: 8px; border: 2px dashed var(--green); justify-content: center; max-width: 380px; margin: 0 auto 20px; flex-wrap: wrap; gap: 10px;">
-                    <span id="upi-id-text" style="font-family: monospace; font-size: 15px; font-weight: bold; flex-grow: 1; text-align: center; color: var(--dark-green); word-break: break-word;">darshana.mehta1956-1@okaxis</span>
-                    <button type="button" class="copy-btn" onclick="copyText('upi-id-text')" style="background: var(--green); color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; transition: background 0.2s; white-space: nowrap;">COPY</button>
-                </div>
-                
-                <label for="screenshot" style="text-align: left; font-size: 16px;">Upload Payment Screenshot (Required)</label>
-                <input type="file" id="screenshot" accept="image/*" required style="border: 2px dashed var(--green); padding: 15px; background: #f9f9f9; cursor: pointer; box-sizing: border-box; width: 100%;">
-                
-                <div class="progress-container" id="progressContainer">
-                    <div class="progress-bar" id="progressBar"></div>
-                </div>
-                <p id="progressText" class="progress-text" style="display: none; text-align: center;">Starting...</p>
-    
-                <button type="submit" class="btn" id="finishBtn">Confirm Order & Payment</button>
+                <p id="detailsProgressText" style="font-size: 14px; margin-top: 5px; font-weight: bold; color: var(--dark-green); margin-bottom: 0;">Saving details...</p>
             </div>
         </form>
+
+        <div id="payment-section" style="display: none; margin-top: 25px; padding-top: 20px; border-top: 2px dashed var(--green); text-align: center;">
+            <h2 style="margin-top: 0; color: var(--dark-green);">Make Your Payment</h2>
+            
+            <!-- Mobile App Deep Links -->
+            <div id="mobile-payment-options" style="margin-bottom: 25px;">
+                <p style="font-size: 15px; margin-bottom: 12px; font-weight: bold; color: var(--dark-green); display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    ⚡ Tap to Pay via UPI App (Mobile)
+                </p>
+                <div class="upi-apps">
+                    <a id="gpay-link" href="#" class="btn btn-gpay" style="display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px rgba(66,133,244,0.2); transition: transform 0.2s, box-shadow 0.2s;">
+                        <span>Google Pay</span>
+                    </a>
+                    <a id="phonepe-link" href="#" class="btn btn-phonepe" style="display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px rgba(95,37,159,0.2); transition: transform 0.2s, box-shadow 0.2s;">
+                        <span>PhonePe</span>
+                    </a>
+                    <a id="paytm-link" href="#" class="btn btn-paytm" style="display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,186,242,0.2); transition: transform 0.2s, box-shadow 0.2s;">
+                        <span>Paytm</span>
+                    </a>
+                    <a id="generic-link" href="#" class="btn" style="display: flex; align-items: center; justify-content: center; gap: 8px; background-color: var(--green); box-shadow: 0 4px 6px rgba(34,140,70,0.2); transition: transform 0.2s, box-shadow 0.2s;">
+                        <span>Any UPI App</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- QR Code Section -->
+            <div id="qr-payment-option" style="margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; background: #f9f9f9; padding: 20px; border-radius: 12px; border: 2px solid #e0e0e0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+                <p style="font-size: 15px; margin-top: 0; margin-bottom: 12px; font-weight: bold; color: var(--dark-green); display: flex; align-items: center; gap: 6px;">
+                    📸 Scan QR Code (Desktop or Fallback)
+                </p>
+                <img id="qr-code" src="" alt="UPI QR Code" style="display: block;">
+                <p style="font-size: 12px; margin: 8px 0 0; color: #666; font-style: italic;">QR code updates dynamically with your total amount.</p>
+            </div>
+
+            <!-- Fallback Copy VPA -->
+            <div id="copy-payment-option" style="margin-bottom: 25px;">
+                <p style="font-size: 14px; margin-bottom: 8px; font-weight: bold; color: var(--dark-green);">Or manually copy Merchant UPI ID:</p>
+                <div class="copy-box" style="display: flex; align-items: center; background: #f5f5f5; padding: 12px; border-radius: 8px; border: 2px dashed var(--green); justify-content: center; max-width: 380px; margin: 0 auto; gap: 10px;">
+                    <span id="upi-id-text" style="font-family: monospace; font-size: 14px; font-weight: bold; flex-grow: 1; text-align: center; color: var(--dark-green); word-break: break-all;">BHARATPE2O0A0F4E0L24786@unitype</span>
+                    <button type="button" class="copy-btn" onclick="copyText('upi-id-text')" style="background: var(--green); color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold; transition: background 0.2s; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">COPY ID</button>
+                </div>
+            </div>
+            
+            <label for="screenshot" style="text-align: left; font-size: 16px;">Upload Payment Screenshot (Required)</label>
+            <input type="file" id="screenshot" accept="image/*" style="border: 2px dashed var(--green); padding: 15px; background: #f9f9f9; cursor: pointer; box-sizing: border-box; width: 100%;">
+            
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <p id="progressText" class="progress-text" style="display: none; text-align: center;">Starting...</p>
+
+            <button type="button" class="btn" id="finishBtn">Confirm Payment</button>
+        </div>
     </div>
 
     <div id="success-message">
@@ -359,7 +395,7 @@
 
 <script>
     // --- SETTINGS ---
-    const UPI_ID = "darshana.mehta1956-1@okaxis";
+    const UPI_ID = "BHARATPE2O0A0F4E0L24786@unitype";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby4lgNvHQjeWUd1T4oDdnB2aAiXW1ZXboTub4cyQhlXjf8ysjJPKBjDi8r6N-q4klHfUQ/exec";
     const BASE_PRICE_PER_BOTTLE = 300;
     const ORDER_MARKUP = 5;
@@ -370,9 +406,11 @@
     const totalDisplay = document.getElementById('total-display');
     const paymentSection = document.getElementById('payment-section');
     const finishBtn = document.getElementById('finishBtn');
+    const submitDetailsBtn = document.getElementById('submitDetailsBtn');
 
     let currentTotal = 0;
     let currentShippingRate = 0;
+    let savedOrderId = null;
 
     // Debounce function
     function debounce(func, timeout = 500) {
@@ -393,7 +431,6 @@
             totalDisplay.innerText = "₹0";
             totalDisplay.style.display = 'block';
             breakdown.style.display = 'none';
-            paymentSection.style.display = 'none';
             currentTotal = 0;
             currentShippingRate = 0;
             return;
@@ -404,7 +441,6 @@
             totalDisplay.innerText = "Please enter a valid PIN code.";
             totalDisplay.style.display = 'block';
             breakdown.style.display = 'none';
-            paymentSection.style.display = 'none';
             currentTotal = 0;
             currentShippingRate = 0;
             return;
@@ -413,7 +449,6 @@
         totalDisplay.innerText = "Calculating shipping...";
         totalDisplay.style.display = 'block';
         breakdown.style.display = 'none';
-        paymentSection.style.display = 'none';
 
         try {
             const response = await fetch(GOOGLE_SCRIPT_URL, {
@@ -440,14 +475,27 @@
                 document.getElementById('breakdown-delivery').innerText = `₹${deliveryCost}`;
                 document.getElementById('breakdown-total').innerText = `₹${currentTotal}`;
                 
+                // Format total to 2 decimal places for UPI payload
+                const formattedTotal = currentTotal.toFixed(2);
+                
+                // Construct standard merchant UPI string
+                const upiString = `upi://pay?pa=${UPI_ID}&pn=Pudina%20Punch%20by%20Swasti&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
+                
+                // Update dynamic QR code source
+                document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
+                
+                // Set high-reliability mobile links
+                document.getElementById('generic-link').href = upiString;
+                document.getElementById('gpay-link').href = `tez://upi/pay?pa=${UPI_ID}&pn=Pudina%20Punch%20by%20Swasti&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
+                document.getElementById('phonepe-link').href = `phonepe://pay?pa=${UPI_ID}&pn=Pudina%20Punch%20by%20Swasti&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
+                document.getElementById('paytm-link').href = `paytmmp://pay?pa=${UPI_ID}&pn=Pudina%20Punch%20by%20Swasti&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
+                
                 breakdown.style.display = 'block';
                 totalDisplay.style.display = 'none';
-                paymentSection.style.display = 'block';
             } else {
                 totalDisplay.innerText = "Error calculating shipping. Please check pincode.";
                 totalDisplay.style.display = 'block';
                 breakdown.style.display = 'none';
-                paymentSection.style.display = 'none';
                 currentTotal = 0;
                 currentShippingRate = 0;
             }
@@ -456,7 +504,6 @@
             totalDisplay.innerText = "Shipping service unavailable.";
             totalDisplay.style.display = 'block';
             breakdown.style.display = 'none';
-            paymentSection.style.display = 'none';
             currentTotal = 0;
             currentShippingRate = 0;
         }
@@ -475,37 +522,29 @@
         });
     }
 
-    // UNIFIED SUBMIT (Create Order -> Upload Screenshot)
+    // STAGE 1 SUBMIT: Save details and get Order ID
     document.getElementById('detailsForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
         if (currentTotal === 0) {
-            alert("Please enter a valid 6-digit PIN code to calculate the total.");
+            alert("Please enter a valid PIN code to calculate the total.");
             return;
         }
 
-        const fileInput = document.getElementById('screenshot');
-        if (fileInput.files.length === 0) {
-            alert("Please upload a payment screenshot.");
-            return;
+        submitDetailsBtn.disabled = true;
+        
+        const detailsProgress = document.getElementById('detailsProgress');
+        const detailsProgressBar = document.getElementById('detailsProgressBar');
+        const detailsProgressText = document.getElementById('detailsProgressText');
+        
+        detailsProgress.style.display = 'block';
+        
+        function updateDetailsProgress(percent, text) {
+            detailsProgressBar.style.width = percent + '%';
+            detailsProgressText.innerText = text;
         }
 
-        finishBtn.disabled = true;
-        finishBtn.style.display = 'none'; // Hide button while processing
-        
-        const progressContainer = document.getElementById('progressContainer');
-        const progressBar = document.getElementById('progressBar');
-        const progressText = document.getElementById('progressText');
-        
-        progressContainer.style.display = 'block';
-        progressText.style.display = 'block';
-
-        function updateProgress(percent, text) {
-            progressBar.style.width = percent + '%';
-            progressText.innerText = text;
-        }
-
-        updateProgress(10, "Saving Order Details...");
+        updateDetailsProgress(30, "Submitting details...");
 
         const orderData = {
             action: 'create_order', 
@@ -525,71 +564,123 @@
             });
             const result = await response.json();
             
-            if(result.status !== "success") {
-                throw new Error("Failed to save order details.");
+            if (result.status !== "success") {
+                throw new Error(result.message || "Failed to save order details.");
             }
             
-            const savedOrderId = result.orderId;
-            updateProgress(40, "Preparing screenshot...");
+            savedOrderId = result.orderId;
+            updateDetailsProgress(100, "Details Saved Successfully!");
             
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-
-            reader.onload = async function() {
-                const base64Data = reader.result.split(',')[1];
+            // Disable inputs to lock details
+            document.getElementById('name').disabled = true;
+            document.getElementById('phone').disabled = true;
+            document.getElementById('address').disabled = true;
+            document.getElementById('pin').disabled = true;
+            document.getElementById('qty').disabled = true;
+            
+            // Hide details submit elements and reveal payment section
+            setTimeout(() => {
+                submitDetailsBtn.style.display = 'none';
+                detailsProgress.style.display = 'none';
                 
-                const imageData = {
-                    action: 'upload_screenshot', 
-                    orderId: savedOrderId,
-                    mimetype: file.type,
-                    base64: base64Data
-                };
-
-                updateProgress(60, "Uploading payment proof...");
-
-                // Simulated progress while waiting for fetch
-                let simulatedPercent = 60;
-                const progressInterval = setInterval(() => {
-                    if (simulatedPercent < 90) {
-                        simulatedPercent += 2;
-                        updateProgress(simulatedPercent, "Verifying payment...");
-                    }
-                }, 300);
-
-                try {
-                    const imgResponse = await fetch(GOOGLE_SCRIPT_URL, {
-                        method: 'POST',
-                        body: JSON.stringify(imageData)
-                    });
-                    const imgResult = await imgResponse.json();
-                    
-                    clearInterval(progressInterval);
-                    
-                    if (imgResult.status === "success") {
-                        updateProgress(100, "Order Confirmed!");
-                        setTimeout(() => {
-                            document.getElementById('unified-form').style.display = 'none';
-                            document.getElementById('success-message').style.display = 'block';
-                        }, 500);
-                    } else {
-                        throw new Error(imgResult.message || "Failed to link screenshot.");
-                    }
-                    
-                } catch (error) {
-                    clearInterval(progressInterval);
-                    alert("Error uploading screenshot: " + error.message);
-                    resetForm();
-                }
-            };
-
-            reader.readAsDataURL(file);
+                // Show payment section
+                paymentSection.style.display = 'block';
+                
+                // Scroll smoothly to payment section
+                paymentSection.scrollIntoView({ behavior: 'smooth' });
+            }, 800);
             
         } catch (error) {
-            alert("Error: " + error.message);
-            resetForm();
+            alert("Error saving details: " + error.message);
+            submitDetailsBtn.disabled = false;
+            detailsProgress.style.display = 'none';
+            detailsProgressBar.style.width = '0%';
         }
+    });
+
+    // STAGE 2 SUBMIT: Upload payment screenshot
+    finishBtn.addEventListener('click', async function() {
+        const fileInput = document.getElementById('screenshot');
+        if (fileInput.files.length === 0) {
+            alert("Please upload a payment screenshot.");
+            return;
+        }
+
+        if (!savedOrderId) {
+            alert("Session expired or order details missing. Please refresh and try again.");
+            return;
+        }
+
+        finishBtn.disabled = true;
+        finishBtn.style.display = 'none'; // Hide button while processing
         
-        function resetForm() {
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        
+        progressContainer.style.display = 'block';
+        progressText.style.display = 'block';
+
+        function updateUploadProgress(percent, text) {
+            progressBar.style.width = percent + '%';
+            progressText.innerText = text;
+        }
+
+        updateUploadProgress(20, "Preparing screenshot...");
+        
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = async function() {
+            const base64Data = reader.result.split(',')[1];
+            
+            const imageData = {
+                action: 'upload_screenshot', 
+                orderId: savedOrderId,
+                mimetype: file.type,
+                base64: base64Data
+            };
+
+            updateUploadProgress(50, "Uploading payment proof...");
+
+            // Simulated progress while waiting for fetch
+            let simulatedPercent = 50;
+            const progressInterval = setInterval(() => {
+                if (simulatedPercent < 90) {
+                    simulatedPercent += 3;
+                    updateUploadProgress(simulatedPercent, "Verifying payment...");
+                }
+            }, 300);
+
+            try {
+                const imgResponse = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(imageData)
+                });
+                const imgResult = await imgResponse.json();
+                
+                clearInterval(progressInterval);
+                
+                if (imgResult.status === "success") {
+                    updateUploadProgress(100, "Payment Confirmed!");
+                    setTimeout(() => {
+                        document.getElementById('unified-form').style.display = 'none';
+                        document.getElementById('success-message').style.display = 'block';
+                    }, 500);
+                } else {
+                    throw new Error(imgResult.message || "Failed to link screenshot.");
+                }
+                
+            } catch (error) {
+                clearInterval(progressInterval);
+                alert("Error uploading screenshot: " + error.message);
+                resetUploadForm();
+            }
+        };
+
+        reader.readAsDataURL(file);
+        
+        function resetUploadForm() {
             finishBtn.disabled = false;
             finishBtn.style.display = 'block';
             progressContainer.style.display = 'none';
