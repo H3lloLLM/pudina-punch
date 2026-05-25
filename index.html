@@ -220,8 +220,8 @@
             font-size: 14px;
         }
         .upi-apps .btn-gpay { grid-column: span 2; }
-        /* Hide Step 2 initially */
-        #step-2, #success-message {
+        /* Hide success message initially */
+        #success-message {
             display: none;
             text-align: center;
         }
@@ -291,7 +291,7 @@
 </div>
 
 <div class="container">
-    <div id="step-1">
+    <div id="unified-form">
         <form id="detailsForm">
             <label for="name">Full Name</label>
             <input type="text" id="name" required>
@@ -326,50 +326,29 @@
                 </div>
                 <h2 id="total-display" style="margin: 0;">₹0</h2>
             </div>
-
-            <button type="submit" class="btn" id="proceedBtn">Submit Details & Pay</button>
-        </form>
-    </div>
-
-    <div id="step-2">
-        <h2>Complete Your Payment</h2>
-        <div class="warning-text" style="background: #e8f5e9; color: var(--dark-green); border: 1px solid var(--green);">
-            ✅ Order Details Saved! Please complete your payment below.
-        </div>
-        
-        <h2 id="final-amount-display" style="color: var(--dark-green); font-size: 32px; margin: 10px 0;"></h2>
-        
-        <div id="payment-options" style="margin-top: 20px;">
-            <p style="margin-bottom: 10px; font-weight: bold;">Tap to Pay (Amount Prefilled)</p>
-            <div class="upi-apps" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;">
-                <a id="btn-gpay" href="#" class="btn btn-gpay" style="margin:0; padding:15px; font-size:16px;">Google Pay</a>
-                <a id="btn-phonepe" href="#" class="btn btn-phonepe" style="margin:0; padding:15px; font-size:16px;">PhonePe</a>
-                <a id="btn-paytm" href="#" class="btn btn-paytm" style="margin:0; padding:15px; font-size:16px;">Paytm</a>
-                <a id="btn-other" href="#" class="btn" style="background-color: var(--green); margin:0; padding:15px; font-size:16px;">Other UPI</a>
-            </div>
             
-            <p style="margin: 20px 0 10px; font-size: 14px; opacity: 0.8;">- OR SCAN QR -</p>
-            <img id="qr-code" src="" alt="UPI QR Code" style="margin: 0 auto; width: 180px; height: 180px; border: 2px solid var(--green); border-radius: 10px; padding: 10px; display: block;">
-
-            <p style="margin: 20px 0 10px; font-size: 14px; opacity: 0.8;">- OR COPY ID -</p>
-            <div class="copy-box" style="display: flex; align-items: center; background: #f1f1f1; padding: 12px; border-radius: 8px; border: 1px dashed var(--green); justify-content: space-between;">
-                <span id="upi-id-text" style="font-family: monospace; font-size: 16px; font-weight: bold; flex-grow: 1; text-align: left;">arshmehta-2@oksbi</span>
-                <button type="button" class="copy-btn" onclick="copyUPI()" style="background: var(--green); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold;">COPY</button>
+            <div id="payment-section" style="display: none; margin-top: 25px; padding-top: 20px; border-top: 2px dashed var(--green);">
+                <h2 style="margin-top: 0;">Make Your Payment</h2>
+                <div id="personal-upi-notice" style="background: #fff3e0; border: 2px solid #ff9800; border-radius: 8px; padding: 15px; margin: 15px auto; color: #e65100; font-weight: bold; font-size: 15px; line-height: 1.5; text-align: left;">
+                    ℹ️ <b>Security Note:</b> Please manually enter the exact total amount in your UPI app.
+                </div>
+                
+                <p style="font-size: 14px; margin-bottom: 10px; font-weight: bold;">Copy this UPI ID to pay via GPay, PhonePe, or Paytm:</p>
+                <div class="copy-box" style="display: flex; align-items: center; background: #f1f1f1; padding: 15px; border-radius: 8px; border: 2px dashed var(--green); justify-content: space-between; max-width: 350px; margin: 0 auto 20px;">
+                    <span id="upi-id-text" style="font-family: monospace; font-size: 18px; font-weight: bold; flex-grow: 1; text-align: left; color: var(--dark-green);">darshana.mehta1956-1@okaxis</span>
+                    <button type="button" class="copy-btn" onclick="copyUPI()" style="background: var(--green); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.2s;">COPY</button>
+                </div>
+                
+                <label for="screenshot" style="text-align: left; font-size: 16px;">Upload Payment Screenshot (Required)</label>
+                <input type="file" id="screenshot" accept="image/*" required style="border: 2px dashed var(--green); padding: 15px; background: #f9f9f9; cursor: pointer; box-sizing: border-box; width: 100%;">
+                
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <p id="progressText" class="progress-text" style="display: none; text-align: center;">Starting...</p>
+    
+                <button type="submit" class="btn" id="finishBtn">Confirm Order & Payment</button>
             </div>
-        </div>
-        
-        <hr style="margin: 25px 0; border: 1px solid #eee;">
-
-        <form id="paymentForm">
-            <label for="screenshot" style="text-align: left; font-size: 16px;">Upload Payment Screenshot (Required)</label>
-            <input type="file" id="screenshot" accept="image/*" required style="border: 2px dashed var(--green); padding: 15px; background: #f9f9f9; cursor: pointer; box-sizing: border-box; width: 100%;">
-            
-            <div class="progress-container" id="progressContainer">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            <p id="progressText" class="progress-text" style="display: none; text-align: center;">Starting...</p>
-
-            <button type="submit" class="btn" id="finishBtn" style="font-size: 20px; padding: 18px;">Confirm Order</button>
         </form>
     </div>
 
@@ -430,7 +409,7 @@
     });
 
     // --- SETTINGS ---
-    const UPI_ID = "arshmehta-2@oksbi";
+    const UPI_ID = "darshana.mehta1956-1@okaxis";
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby4lgNvHQjeWUd1T4oDdnB2aAiXW1ZXboTub4cyQhlXjf8ysjJPKBjDi8r6N-q4klHfUQ/exec";
     const BASE_PRICE_PER_BOTTLE = 300;
     const ORDER_MARKUP = 5;
@@ -439,12 +418,11 @@
     const pinInput = document.getElementById('pin');
     const qtyInput = document.getElementById('qty');
     const totalDisplay = document.getElementById('total-display');
-    const proceedBtn = document.getElementById('proceedBtn');
+    const paymentSection = document.getElementById('payment-section');
     const finishBtn = document.getElementById('finishBtn');
 
     let currentTotal = 0;
     let currentShippingRate = 0;
-    let savedOrderId = ""; // To link Step 1 and Step 2
 
     // Debounce function
     function debounce(func, timeout = 500) {
@@ -465,6 +443,7 @@
             totalDisplay.innerText = "₹0";
             totalDisplay.style.display = 'block';
             breakdown.style.display = 'none';
+            paymentSection.style.display = 'none';
             currentTotal = 0;
             currentShippingRate = 0;
             return;
@@ -475,16 +454,16 @@
             totalDisplay.innerText = "Please enter a valid PIN code.";
             totalDisplay.style.display = 'block';
             breakdown.style.display = 'none';
+            paymentSection.style.display = 'none';
             currentTotal = 0;
             currentShippingRate = 0;
-            proceedBtn.disabled = true;
             return;
         }
 
         totalDisplay.innerText = "Calculating shipping...";
         totalDisplay.style.display = 'block';
         breakdown.style.display = 'none';
-        proceedBtn.disabled = true;
+        paymentSection.style.display = 'none';
 
         try {
             const response = await fetch(GOOGLE_SCRIPT_URL, {
@@ -513,12 +492,12 @@
                 
                 breakdown.style.display = 'block';
                 totalDisplay.style.display = 'none';
-                
-                proceedBtn.disabled = false;
+                paymentSection.style.display = 'block';
             } else {
                 totalDisplay.innerText = "Error calculating shipping. Please check pincode.";
                 totalDisplay.style.display = 'block';
                 breakdown.style.display = 'none';
+                paymentSection.style.display = 'none';
                 currentTotal = 0;
                 currentShippingRate = 0;
             }
@@ -527,6 +506,7 @@
             totalDisplay.innerText = "Shipping service unavailable.";
             totalDisplay.style.display = 'block';
             breakdown.style.display = 'none';
+            paymentSection.style.display = 'none';
             currentTotal = 0;
             currentShippingRate = 0;
         }
@@ -536,9 +516,6 @@
 
     pinInput.addEventListener('input', debouncedCalculate);
     qtyInput.addEventListener('input', debouncedCalculate);
-    // Detect iOS Safari
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
     // Copy UPI ID function
     window.copyUPI = function() {
@@ -548,20 +525,39 @@
         });
     }
 
-    // STEP 1: SUBMIT DETAILS
+    // UNIFIED SUBMIT (Create Order -> Upload Screenshot)
     document.getElementById('detailsForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        // 8. Clicked on "submit details and pay" button
-        gtag('event', 'click_submit_details');
+        gtag('event', 'click_confirm_payment');
 
         if (currentTotal === 0) {
             alert("Please enter a valid 6-digit PIN code to calculate the total.");
             return;
         }
 
-        proceedBtn.innerText = "Saving Details...";
-        proceedBtn.disabled = true;
+        const fileInput = document.getElementById('screenshot');
+        if (fileInput.files.length === 0) {
+            alert("Please upload a payment screenshot.");
+            return;
+        }
+
+        finishBtn.disabled = true;
+        finishBtn.style.display = 'none'; // Hide button while processing
+        
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        
+        progressContainer.style.display = 'block';
+        progressText.style.display = 'block';
+
+        function updateProgress(percent, text) {
+            progressBar.style.width = percent + '%';
+            progressText.innerText = text;
+        }
+
+        updateProgress(10, "Saving Order Details...");
 
         const orderData = {
             action: 'create_order', 
@@ -581,138 +577,78 @@
             });
             const result = await response.json();
             
-            if(result.status === "success") {
-                // 9. Reached payment part of the form
-                gtag('event', 'reach_payment_step');
-
-                savedOrderId = result.orderId;
-                
-                // Set up Step 2 UI
-                document.getElementById('final-amount-display').innerText = `Pay ₹${currentTotal}`;
-                
-                const formattedTotal = currentTotal.toFixed(2);
-                
-                // Constructing deep links WITH amount, and adding transaction ref (tr) which helps sometimes.
-                const payeeName = encodeURIComponent("ARSH SOMDATT MEHTA");
-                const note = encodeURIComponent("Pudina Punch Order " + savedOrderId);
-                const trRef = savedOrderId; // Transaction reference
-                
-                const baseParams = `pa=${UPI_ID}&pn=${payeeName}&am=${formattedTotal}&cu=INR&tn=${note}&tr=${trRef}`;
-                const upiString = `upi://pay?${baseParams}`;
-                
-                // Set up QR Code
-                document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
-
-                // Set deep links directly (working around Safari by offering direct app intents to everyone)
-                document.getElementById('btn-gpay').href = `tez://upi/pay?${baseParams}`;
-                document.getElementById('btn-phonepe').href = `phonepe://pay?${baseParams}`;
-                document.getElementById('btn-paytm').href = `paytmmp://pay?${baseParams}`;
-                document.getElementById('btn-other').href = upiString;
-
-                // Hide Step 1, Show Step 2
-                document.getElementById('step-1').style.display = 'none';
-                document.getElementById('step-2').style.display = 'block';
+            if(result.status !== "success") {
+                throw new Error("Failed to save order details.");
             }
-        } catch (error) {
-            alert("Error saving details. Please try again.");
-            proceedBtn.innerText = "Submit Details & Pay";
-            proceedBtn.disabled = false;
-        }
-    });
-
-    // STEP 2: UPLOAD SCREENSHOT
-    document.getElementById('paymentForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        // 13. Clicked on "Confirm Payment" button
-        gtag('event', 'click_confirm_payment');
-
-        const fileInput = document.getElementById('screenshot');
-        if (fileInput.files.length === 0) {
-            alert("Please upload a payment screenshot.");
-            return;
-        }
-
-        const progressContainer = document.getElementById('progressContainer');
-        const progressBar = document.getElementById('progressBar');
-        const progressText = document.getElementById('progressText');
-        
-        finishBtn.disabled = true;
-        finishBtn.style.display = 'none'; // Hide button while processing
-        progressContainer.style.display = 'block';
-        progressText.style.display = 'block';
-
-        function updateProgress(percent, text) {
-            progressBar.style.width = percent + '%';
-            progressText.innerText = text;
-        }
-
-        updateProgress(10, "Reading payment screenshot...");
-
-        const file = fileInput.files[0];
-        const reader = new FileReader();
-
-        reader.onload = async function() {
-            updateProgress(30, "Preparing to upload...");
-            const base64Data = reader.result.split(',')[1];
             
-            const imageData = {
-                action: 'upload_screenshot', 
-                orderId: savedOrderId,
-                mimetype: file.type,
-                base64: base64Data
+            const savedOrderId = result.orderId;
+            updateProgress(40, "Preparing screenshot...");
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = async function() {
+                const base64Data = reader.result.split(',')[1];
+                
+                const imageData = {
+                    action: 'upload_screenshot', 
+                    orderId: savedOrderId,
+                    mimetype: file.type,
+                    base64: base64Data
+                };
+
+                updateProgress(60, "Uploading payment proof...");
+
+                // Simulated progress while waiting for fetch
+                let simulatedPercent = 60;
+                const progressInterval = setInterval(() => {
+                    if (simulatedPercent < 90) {
+                        simulatedPercent += 2;
+                        updateProgress(simulatedPercent, "Verifying payment...");
+                    }
+                }, 300);
+
+                try {
+                    const imgResponse = await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        body: JSON.stringify(imageData)
+                    });
+                    const imgResult = await imgResponse.json();
+                    
+                    clearInterval(progressInterval);
+                    
+                    if (imgResult.status === "success") {
+                        gtag('event', 'order_confirmed');
+                        updateProgress(100, "Order Confirmed!");
+                        setTimeout(() => {
+                            document.getElementById('unified-form').style.display = 'none';
+                            document.getElementById('success-message').style.display = 'block';
+                        }, 500);
+                    } else {
+                        throw new Error(imgResult.message || "Failed to link screenshot.");
+                    }
+                    
+                } catch (error) {
+                    clearInterval(progressInterval);
+                    alert("Error uploading screenshot: " + error.message);
+                    resetForm();
+                }
             };
 
-            updateProgress(50, "Uploading to server...");
-
-            // Simulated progress while waiting for fetch
-            let simulatedPercent = 50;
-            const progressInterval = setInterval(() => {
-                if (simulatedPercent < 90) {
-                    simulatedPercent += 2;
-                    updateProgress(simulatedPercent, "Verifying payment details...");
-                }
-            }, 300);
-
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(imageData)
-                });
-                const result = await response.json();
-                
-                clearInterval(progressInterval);
-                
-                if (result.status === "success") {
-                    // 14. Reached "Order Confirmed!" screen
-                    gtag('event', 'order_confirmed');
-
-                    updateProgress(100, "Order Confirmed!");
-                    setTimeout(() => {
-                        document.getElementById('step-2').style.display = 'none';
-                        document.getElementById('success-message').style.display = 'block';
-                    }, 500);
-                } else {
-                    alert("Error: " + (result.message || "Failed to update order status."));
-                    resetStep2();
-                }
-                
-            } catch (error) {
-                clearInterval(progressInterval);
-                alert("Error uploading screenshot. Please try again.");
-                resetStep2();
-            }
-        };
-
-        function resetStep2() {
+            reader.readAsDataURL(file);
+            
+        } catch (error) {
+            alert("Error: " + error.message);
+            resetForm();
+        }
+        
+        function resetForm() {
             finishBtn.disabled = false;
             finishBtn.style.display = 'block';
             progressContainer.style.display = 'none';
             progressText.style.display = 'none';
             progressBar.style.width = '0%';
         }
-
-        reader.readAsDataURL(file);
     });
 </script>
 
