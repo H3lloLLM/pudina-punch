@@ -333,10 +333,16 @@
                     ℹ️ <b>Security Note:</b> Please manually enter the exact total amount in your UPI app.
                 </div>
                 
-                <p style="font-size: 14px; margin-bottom: 10px; font-weight: bold;">Copy this UPI ID to pay via GPay, PhonePe, or Paytm:</p>
+                <p style="font-size: 14px; margin-bottom: 10px; font-weight: bold;">Method 1: Copy this Phone Number (GPay, PhonePe, Paytm)</p>
+                <div class="copy-box" style="display: flex; align-items: center; background: #f1f1f1; padding: 12px; border-radius: 8px; border: 2px dashed var(--green); justify-content: center; max-width: 380px; margin: 0 auto 10px; flex-wrap: wrap; gap: 10px;">
+                    <span id="phone-pay-text" style="font-family: monospace; font-size: 18px; font-weight: bold; flex-grow: 1; text-align: center; color: var(--dark-green);">9869372313</span>
+                    <button type="button" class="copy-btn" onclick="copyText('phone-pay-text')" style="background: var(--green); color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; transition: background 0.2s; white-space: nowrap;">COPY</button>
+                </div>
+                
+                <p style="font-size: 14px; margin: 15px 0 10px; font-weight: bold;">Method 2: Copy this UPI ID</p>
                 <div class="copy-box" style="display: flex; align-items: center; background: #f1f1f1; padding: 12px; border-radius: 8px; border: 2px dashed var(--green); justify-content: center; max-width: 380px; margin: 0 auto 20px; flex-wrap: wrap; gap: 10px;">
                     <span id="upi-id-text" style="font-family: monospace; font-size: 15px; font-weight: bold; flex-grow: 1; text-align: center; color: var(--dark-green); word-break: break-word;">darshana.mehta1956-1@okaxis</span>
-                    <button type="button" class="copy-btn" onclick="copyUPI()" style="background: var(--green); color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; transition: background 0.2s; white-space: nowrap;">COPY</button>
+                    <button type="button" class="copy-btn" onclick="copyText('upi-id-text')" style="background: var(--green); color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; transition: background 0.2s; white-space: nowrap;">COPY</button>
                 </div>
                 
                 <label for="screenshot" style="text-align: left; font-size: 16px;">Upload Payment Screenshot (Required)</label>
@@ -517,11 +523,11 @@
     pinInput.addEventListener('input', debouncedCalculate);
     qtyInput.addEventListener('input', debouncedCalculate);
 
-    // Copy UPI ID function
-    window.copyUPI = function() {
-        const upiId = document.getElementById('upi-id-text').innerText;
-        navigator.clipboard.writeText(upiId).then(() => {
-            alert("UPI ID Copied: " + upiId);
+    // Copy function for Phone/UPI
+    window.copyText = function(elementId) {
+        const text = document.getElementById(elementId).innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Copied: " + text);
         });
     }
 
