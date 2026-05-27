@@ -395,49 +395,34 @@
                     ⚠️ Crucial Action Required:
                 </p>
                 <ol style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6; font-weight: bold;">
-                    <li>Pay the total amount using any method below.</li>
+                    <li>Copy the UPI ID or Phone Number below and open your UPI app.</li>
+                    <li>Enter the total amount shown above and complete the payment.</li>
                     <li><span style="color: #c00;">Capture a screenshot</span> of your successful payment screen.</li>
                     <li>Return here, <span style="color: #c00;">upload the screenshot</span>, and click <span style="color: #c00;">"Confirm Payment"</span> to secure your order.</li>
                 </ol>
             </div>
             
-            <!-- Mobile App Deep Links -->
-            <div id="mobile-payment-options" style="margin-bottom: 25px;">
-                <p style="font-size: 15px; margin-bottom: 12px; font-weight: bold; color: var(--dark-green); display: flex; align-items: center; justify-content: center; gap: 6px;">
-                    ⚡ Tap to Pay via UPI App (Mobile)
-                </p>
-                <div class="upi-apps">
-                    <a id="gpay-link" href="#" class="btn btn-gpay" style="display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px rgba(66,133,244,0.2); transition: transform 0.2s, box-shadow 0.2s;">
-                        <span>Google Pay</span>
-                    </a>
-                    <a id="phonepe-link" href="#" class="btn btn-phonepe" style="display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px rgba(95,37,159,0.2); transition: transform 0.2s, box-shadow 0.2s;">
-                        <span>PhonePe</span>
-                    </a>
-                    <a id="paytm-link" href="#" class="btn btn-paytm" style="display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,186,242,0.2); transition: transform 0.2s, box-shadow 0.2s;">
-                        <span>Paytm</span>
-                    </a>
-                    <a id="generic-link" href="#" class="btn" style="display: flex; align-items: center; justify-content: center; gap: 8px; background-color: var(--green); box-shadow: 0 4px 6px rgba(34,140,70,0.2); transition: transform 0.2s, box-shadow 0.2s;">
-                        <span>Any UPI App</span>
-                    </a>
+            <!-- Fallback Copy VPA & Phone -->
+            <div id="copy-payment-option" style="margin-bottom: 25px;">
+                <p style="font-size: 14px; margin-bottom: 8px; font-weight: bold; color: var(--dark-green);">Copy Merchant UPI ID:</p>
+                <div class="copy-box" style="display: flex; align-items: center; background: #f5f5f5; padding: 12px; border-radius: 8px; border: 2px dashed var(--green); justify-content: center; max-width: 380px; margin: 0 auto 15px; gap: 10px;">
+                    <span id="upi-id-text" style="font-family: monospace; font-size: 14px; font-weight: bold; flex-grow: 1; text-align: center; color: var(--dark-green); word-break: break-all;">BHARATPE2O0A0F4E0L24786@unitype</span>
+                    <button type="button" class="copy-btn" onclick="copyText('upi-id-text')" style="background: var(--green); color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold; transition: background 0.2s; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">COPY ID</button>
+                </div>
+
+                <p style="font-size: 14px; margin-bottom: 8px; font-weight: bold; color: var(--dark-green);">Or Copy Phone Number:</p>
+                <div class="copy-box" style="display: flex; align-items: center; background: #f5f5f5; padding: 12px; border-radius: 8px; border: 2px dashed var(--green); justify-content: center; max-width: 380px; margin: 0 auto; gap: 10px;">
+                    <span id="phone-number-text" style="font-family: monospace; font-size: 16px; font-weight: bold; flex-grow: 1; text-align: center; color: var(--dark-green); letter-spacing: 1px;">7738309853</span>
+                    <button type="button" class="copy-btn" onclick="copyText('phone-number-text')" style="background: var(--green); color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold; transition: background 0.2s; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">COPY NO.</button>
                 </div>
             </div>
 
             <!-- QR Code Section -->
             <div id="qr-payment-option" style="margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; background: #f9f9f9; padding: 20px; border-radius: 12px; border: 2px solid #e0e0e0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
                 <p style="font-size: 15px; margin-top: 0; margin-bottom: 12px; font-weight: bold; color: var(--dark-green); display: flex; align-items: center; gap: 6px;">
-                    📸 Scan QR Code (Desktop or Fallback)
+                    📸 Or Scan QR Code (Enter Amount Manually)
                 </p>
-                <img id="qr-code" src="" alt="UPI QR Code" style="display: block;">
-                <p style="font-size: 12px; margin: 8px 0 0; color: #666; font-style: italic;">QR code updates dynamically with your total amount.</p>
-            </div>
-
-            <!-- Fallback Copy VPA -->
-            <div id="copy-payment-option" style="margin-bottom: 25px;">
-                <p style="font-size: 14px; margin-bottom: 8px; font-weight: bold; color: var(--dark-green);">Or manually copy Merchant UPI ID:</p>
-                <div class="copy-box" style="display: flex; align-items: center; background: #f5f5f5; padding: 12px; border-radius: 8px; border: 2px dashed var(--green); justify-content: center; max-width: 380px; margin: 0 auto; gap: 10px;">
-                    <span id="upi-id-text" style="font-family: monospace; font-size: 14px; font-weight: bold; flex-grow: 1; text-align: center; color: var(--dark-green); word-break: break-all;">BHARATPE2O0A0F4E0L24786@unitype</span>
-                    <button type="button" class="copy-btn" onclick="copyText('upi-id-text')" style="background: var(--green); color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold; transition: background 0.2s; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">COPY ID</button>
-                </div>
+                <img id="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi%3A%2F%2Fpay%3Fpa%3DBHARATPE2O0A0F4E0L24786%40unitype%26pn%3DPudina%2520Punch%2520by%2520Swasti" alt="UPI QR Code" style="display: block;">
             </div>
             
             <label for="screenshot" style="text-align: left; font-size: 16px;">Upload Payment Screenshot (Required)</label>
@@ -541,21 +526,6 @@
                 document.getElementById('breakdown-base').innerText = `₹${baseTotal}`;
                 document.getElementById('breakdown-delivery').innerText = `₹${deliveryCost}`;
                 document.getElementById('breakdown-total').innerText = `₹${currentTotal}`;
-                
-                // Format total to 2 decimal places for UPI payload
-                const formattedTotal = currentTotal.toFixed(2);
-                
-                // Construct standard merchant UPI string
-                const upiString = `upi://pay?pa=${UPI_ID}&pn=Pudina%20Punch%20by%20Swasti&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
-                
-                // Update dynamic QR code source
-                document.getElementById('qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
-                
-                // Set high-reliability mobile links
-                document.getElementById('generic-link').href = upiString;
-                document.getElementById('gpay-link').href = `tez://upi/pay?pa=${UPI_ID}&pn=Pudina%20Punch%20by%20Swasti&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
-                document.getElementById('phonepe-link').href = `phonepe://pay?pa=${UPI_ID}&pn=Pudina%20Punch%20by%20Swasti&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
-                document.getElementById('paytm-link').href = `paytmmp://pay?pa=${UPI_ID}&pn=Pudina%20Punch%20by%20Swasti&am=${formattedTotal}&cu=INR&tn=Pudina%20Punch%20Order`;
                 
                 breakdown.style.display = 'block';
                 totalDisplay.style.display = 'none';
